@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -17,6 +18,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import javax.swing.plaf.SplitPaneUI;
@@ -72,48 +74,24 @@ public class Main extends Application {
         toolsPane.getChildren().add(split);
         toolsPane.getChildren().addAll(makeFixedButton, makeParallButton);
 
-
-        Canvas canvas = new Canvas(500, 500);
-        canvas.setStyle(paintAreaStyles);
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        Group drawBox = new Group();
+        drawBox.getChildren().add(new Line(100,100,200,200));
+        Rectangle rect = new Rectangle(100,100,100,100);
+        rect.setOpacity(0.5);
+        drawBox.getChildren().add(rect);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setRight(toolsPane);
-        borderPane.setCenter(canvas);
+        borderPane.setCenter(drawBox);
         borderPane.setMinSize(600, 500);
 
         Scene scene = new Scene(borderPane);
 
-        canvas.setOnMouseClicked(new javafx.event.EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (!state.equals(State.IsDragged)) {
-                    buffPosX = event.getX();
-                    buffPosY = event.getY();
-                    state = State.IsDragged;
-                } else {
-                    state = State.Free;
-                }
-            }
-        });
 
-        canvas.setOnMouseMoved(new javafx.event.EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (state.equals(State.IsDragged)) {
-                    gc.setStroke(Color.CORAL);
-                    gc.setLineWidth(3);
-
-                    gc.strokeLine(buffPosX, buffPosY, event.getX(), event.getY());
-                }
-            }
-        });
 
         clearButton.setOnMouseClicked(new javafx.event.EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
             }
         });
 
